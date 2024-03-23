@@ -31,15 +31,11 @@ Uncover hidden gems and rediscover old favorites based on your tastes! We use yo
 
 tags = pd.read_csv('tags2.csv')
 df3 = pd.read_csv('df3.csv')
-title_df = pd.read_csv(title_df.csv)
+title_df = pd.read_csv('title_df.csv')
 
-from nltk.stem import WordNetLemmatizer
-lemmatizer = WordNetLemmatizer()
 nltk.download('wordnet')
 
 tags['tags_processed']=tags['tag'].str.lower()
-
-# Get the English stop words
 stop_words = set(stopwords.words('english'))
 tags['tags_processed'] = tags['tags_processed'].apply(lambda x: ' '.join([word for word in x.split() if word not in stop_words]))
 
@@ -50,35 +46,18 @@ def tokenize_and_lemmatize(text):
 tags['tags_processed']=tags['tags_processed'].apply(tokenize_and_lemmatize)
 
 vectorizer = TfidfVectorizer(max_features=20000) 
-
 tag_matrix = vectorizer.fit_transform(tags['tags_processed'].apply(lambda x: ' '.join(x)))
 
 # Assuming your dataset is named 'df' and contains 217450 rows
 total_rows = 197610
 num_segments = 7
 
-# Calculate the number of rows each segment should contain
-rows_per_segment = total_rows // num_segments
-
-# Create a dictionary to store the segments with variable names
-segment_dict = {}
-
-# Split the dataset into 4 equal parts and assign them to variables
-for i in range(num_segments):
-    start_index = i * rows_per_segment
-    end_index = (i + 1) * rows_per_segment if i != num_segments - 1 else total_rows
-    segment_dict[f"part{i+1}"] = tags[start_index:end_index]
-
 # Assuming your tag matrix is named 'tag_matrix'
 total_rows = tag_matrix.shape[0]
 num_segments = 7
-
-# Calculate the number of rows each segment should contain
 rows_per_segment = total_rows // num_segments
-
 # Create a list to store the segments
 segment_list = []
-
 # Split the tag matrix into 5 equal parts
 for i in range(num_segments):
     start_index = i * rows_per_segment
@@ -113,10 +92,6 @@ cosine_similarity4 = cosine_similarity(part4, part4)
 cosine_similarity5 = cosine_similarity(part5, part5)
 cosine_similarity6 = cosine_similarity(part6, part6)
 cosine_similarity7 = cosine_similarity(part7, part7)
-
-merged_df = df4.merge(df6,on='movieId')
-title_df = merged_df.groupby(['userId', 'movieId', 'title'])['tag'].apply(lambda x: ' '.join(str(tag) for tag in x)).reset_index()
-
 
 @st.cache_data
 def fetch_movie_info(tmdbId):
