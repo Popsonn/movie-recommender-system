@@ -4,7 +4,7 @@ import pickle
 
 st.set_page_config(page_title="Recommender System", layout="wide")
 st.title('Movie Recommender System')
-st.image('C:/Users/DELL/Downloads/1_oRJYoC18Msc4tC6FExYRKQ.jpg')
+st.image('https://github.com/Popsonn/movie-recommender-system/blob/main/1_oRJYoC18Msc4tC6FExYRKQ.jpg')
 
     # Add an introductory paragraph with additional information and feedback request
 st.markdown("""
