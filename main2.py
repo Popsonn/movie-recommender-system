@@ -4,7 +4,6 @@ import pickle
 import pandas as pd
 import numpy as np
 import re
-from scipy.sparse import csr_matrix
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import PorterStemmer
