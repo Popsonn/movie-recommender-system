@@ -29,42 +29,14 @@ Uncover hidden gems and rediscover old favorites based on your tastes! We use yo
 **Let us know what you think!** We're always looking for ways to improve the recommendations.
 """)
 
-df4 = pd.read_csv('movies.csv')
-df6 = pd.read_csv('tags.csv')
-df3 = pd.read_csv('links.csv')
+tags = pd.read_csv('tags2.csv')
+df3 = pd.read_csv('df3.csv')
+title_df = pd.read_csv(title_df.csv)
 
-common_movie_ids = set(df4['movieId']) & set(df6['movieId'])
-
-df4 = df4[df4['movieId'].isin(common_movie_ids)]
-df6 = df6[df6['movieId'].isin(common_movie_ids)]
-
-users_per_movie = df6.groupby('movieId')['userId'].nunique()
-movies_tagged_by_user = df6.groupby('userId')['movieId'].nunique()
-
-threshold_users = 10  # Adjust this threshold as needed
-
-# Filter out unpopular movies (movies tagged by fewer than the specified threshold of users)
-popular_movies = users_per_movie[users_per_movie >= threshold_users].index
-
-min_movie_threshold = 7
-popular_users = movies_tagged_by_user[movies_tagged_by_user >= min_movie_threshold].index
-
-#Filter the original DataFrame to keep only popular movies
-df4 = df4[df4['movieId'].isin(popular_movies)]
-df6 = df6[(df6['userId'].isin(popular_users)) & (df6['movieId'].isin(popular_movies))]
-
-a = df6.groupby('userId')['movieId'].nunique()
-min_movie_threshold = 7
-popular_userss = a[a >= min_movie_threshold].index
-
-#Filter the original DataFrame to keep only popular movies
-df6 = df6[df6['userId'].isin(popular_userss)]
-
-df6 = df6.drop(columns='timestamp',axis=1)
 from nltk.stem import WordNetLemmatizer
 lemmatizer = WordNetLemmatizer()
 nltk.download('wordnet')
-tags = df6.groupby(['userId', 'movieId'])['tag'].apply(lambda x: ' '.join(str(tag) for tag in x)).reset_index()
+
 tags['tags_processed']=tags['tag'].str.lower()
 
 # Get the English stop words
