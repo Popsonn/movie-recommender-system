@@ -3,7 +3,9 @@ import requests
 import pickle
 import pandas as pd
 import numpy as np
+import nltk
 import re
+from scipy.sparse import csr_matrix
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import PorterStemmer
@@ -26,6 +28,123 @@ Uncover hidden gems and rediscover old favorites based on your tastes! We use yo
 
 **Let us know what you think!** We're always looking for ways to improve the recommendations.
 """)
+
+df4 = pd.read_csv('movies.csv')
+df6 = pd.read_csv('tags.csv')
+df3 = pd.read_csv('links.csv')
+
+common_movie_ids = set(df4['movieId']) & set(df6['movieId'])
+
+df4 = df4[df4['movieId'].isin(common_movie_ids)]
+df6 = df6[df6['movieId'].isin(common_movie_ids)]
+
+users_per_movie = df6.groupby('movieId')['userId'].nunique()
+movies_tagged_by_user = df6.groupby('userId')['movieId'].nunique()
+
+threshold_users = 10  # Adjust this threshold as needed
+
+# Filter out unpopular movies (movies tagged by fewer than the specified threshold of users)
+popular_movies = users_per_movie[users_per_movie >= threshold_users].index
+
+min_movie_threshold = 7
+popular_users = movies_tagged_by_user[movies_tagged_by_user >= min_movie_threshold].index
+
+#Filter the original DataFrame to keep only popular movies
+df4 = df4[df4['movieId'].isin(popular_movies)]
+df6 = df6[(df6['userId'].isin(popular_users)) & (df6['movieId'].isin(popular_movies))]
+
+a = df6.groupby('userId')['movieId'].nunique()
+min_movie_threshold = 7
+popular_userss = a[a >= min_movie_threshold].index
+
+#Filter the original DataFrame to keep only popular movies
+df6 = df6[df6['userId'].isin(popular_userss)]
+
+df6 = df6.drop(columns='timestamp',axis=1)
+from nltk.stem import WordNetLemmatizer
+lemmatizer = WordNetLemmatizer()
+nltk.download('wordnet')
+tags = df6.groupby(['userId', 'movieId'])['tag'].apply(lambda x: ' '.join(str(tag) for tag in x)).reset_index()
+tags['tags_processed']=tags['tag'].str.lower()
+
+# Get the English stop words
+stop_words = set(stopwords.words('english'))
+tags['tags_processed'] = tags['tags_processed'].apply(lambda x: ' '.join([word for word in x.split() if word not in stop_words]))
+
+lemmatizer = WordNetLemmatizer()
+def tokenize_and_lemmatize(text):
+    """Tokenizes and lemmatizes a string."""
+    return [lemmatizer.lemmatize(token) for token in word_tokenize(text)]
+tags['tags_processed']=tags['tags_processed'].apply(tokenize_and_lemmatize)
+
+vectorizer = TfidfVectorizer(max_features=20000) 
+
+tag_matrix = vectorizer.fit_transform(tags['tags_processed'].apply(lambda x: ' '.join(x)))
+
+# Assuming your dataset is named 'df' and contains 217450 rows
+total_rows = 197610
+num_segments = 7
+
+# Calculate the number of rows each segment should contain
+rows_per_segment = total_rows // num_segments
+
+# Create a dictionary to store the segments with variable names
+segment_dict = {}
+
+# Split the dataset into 4 equal parts and assign them to variables
+for i in range(num_segments):
+    start_index = i * rows_per_segment
+    end_index = (i + 1) * rows_per_segment if i != num_segments - 1 else total_rows
+    segment_dict[f"part{i+1}"] = tags[start_index:end_index]
+
+# Assuming your tag matrix is named 'tag_matrix'
+total_rows = tag_matrix.shape[0]
+num_segments = 7
+
+# Calculate the number of rows each segment should contain
+rows_per_segment = total_rows // num_segments
+
+# Create a list to store the segments
+segment_list = []
+
+# Split the tag matrix into 5 equal parts
+for i in range(num_segments):
+    start_index = i * rows_per_segment
+    end_index = (i + 1) * rows_per_segment if i != num_segments - 1 else total_rows
+    segment = tag_matrix[start_index:end_index, :]
+    segment_list.append(segment)
+
+# Now you have a list containing 5 parts of your tag matrix
+# Accessing the first segment (part1)
+part1 = segment_list[0]
+
+# Accessing the second segment (part2)
+part2 = segment_list[1]
+
+# Accessing the third segment (part3)
+part3 = segment_list[2]
+
+# Accessing the fourth segment (part4)
+part4 = segment_list[3]
+
+# Accessing the fifth segment (part5)
+part5 = segment_list[4]
+
+part6 = segment_list[5]
+
+part7 = segment_list[6]
+
+cosine_similarity1 = cosine_similarity(part1, part1)
+cosine_similarity2 = cosine_similarity(part2, part2)
+cosine_similarity3 = cosine_similarity(part3, part3)
+cosine_similarity4 = cosine_similarity(part4, part4)
+cosine_similarity5 = cosine_similarity(part5, part5)
+cosine_similarity6 = cosine_similarity(part6, part6)
+cosine_similarity7 = cosine_similarity(part7, part7)
+
+merged_df = df4.merge(df6,on='movieId')
+title_df = merged_df.groupby(['userId', 'movieId', 'title'])['tag'].apply(lambda x: ' '.join(str(tag) for tag in x)).reset_index()
+
 
 @st.cache_data
 def fetch_movie_info(tmdbId):
