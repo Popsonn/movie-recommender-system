@@ -39,6 +39,7 @@ df3 = pd.read_csv('df3.csv')
 title_df = pd.read_csv('title_df.csv')
 
 nltk.download('wordnet')
+
 tags = tags.fillna('')
 tags['tags_processed']=tags['tag'].str.lower()
 stop_words = set(stopwords.words('english'))
