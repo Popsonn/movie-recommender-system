@@ -1,0 +1,17 @@
+nest-asyncio
+nltk
+streamlit
+notebook
+notebook-shim
+numpy
+pandas
+semver
+protobuf
+
+tenacity
+packaging
+Pillow
+requests
+faiss-cpu
+scipy
+scikit-learn
