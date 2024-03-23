@@ -94,17 +94,17 @@ def generate_movie_recommendations(movie_title, full_movie_titles_df, cosine_sim
 
 @st.cache_data
 def load_pickled_data2(
-    title_df_path="title_df.pkl",
+    title_df_path="C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/title_df.pkl",
     cosine_similarity_paths=[
-        "cosine_similarity1.pkl",
-        "cosine_similarity2.pkl",
-        "cosine_similarity3.pkl",
-        "cosine_similarity4.pkl",
-        "cosine_similarity5.pkl",
-        "cosine_similarity6.pkl",
-        "cosine_similarity7.pkl",
+        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity1.pkl",
+        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity2.pkl",
+        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity3.pkl",
+        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity4.pkl",
+        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity5.pkl",
+        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity6.pkl",
+        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity7.pkl",
     ],
-    df3_path="df3.pkl"
+    df3_path="C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/df3.pkl"
 ):
 
     data = {}
