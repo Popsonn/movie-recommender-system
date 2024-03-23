@@ -3,7 +3,6 @@ import requests
 import pickle
 import pandas as pd
 import numpy as np
-import nltk
 import re
 from scipy.sparse import csr_matrix
 from nltk.corpus import stopwords
