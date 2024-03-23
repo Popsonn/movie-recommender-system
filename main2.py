@@ -1,6 +1,18 @@
 import streamlit as st
 import requests
 import pickle
+import pandas as pd
+import numpy as np
+import nltk
+import re
+from scipy.sparse import csr_matrix
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem.porter import PorterStemmer
+from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 st.set_page_config(page_title="Recommender System", layout="wide")
 st.title('Movie Recommender System')
@@ -94,17 +106,17 @@ def generate_movie_recommendations(movie_title, full_movie_titles_df, cosine_sim
 
 @st.cache_data
 def load_pickled_data2(
-    title_df_path="C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/title_df.pkl",
+    title_df_path=title_df,
     cosine_similarity_paths=[
-        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity1.pkl",
-        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity2.pkl",
-        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity3.pkl",
-        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity4.pkl",
-        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity5.pkl",
-        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity6.pkl",
-        "C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/cosine_similarity7.pkl",
+        cosine_similarity1,
+        cosine_similarity2,
+        cosine_similarity3,
+        cosine_similarity4,
+        cosine_similarity5,
+        cosine_similarity6,
+        cosine_similarity7,
     ],
-    df3_path="C:/Users/DELL/Downloads/ml-25m (1)/ml-25m/df3.pkl"
+    df3_path=df3
 ):
 
     data = {}
